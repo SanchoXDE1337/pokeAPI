@@ -2,7 +2,7 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/.idea/hackernews-client.iml" filepath="$PROJECT_DIR$/.idea/hackernews-client.iml" />
+      <module fileurl="file://$PROJECT_DIR$/../pokeAPI/.idea/pokeAPI.iml" filepath="$PROJECT_DIR$/../pokeAPI/.idea/pokeAPI.iml" />
     </modules>
   </component>
 </project>

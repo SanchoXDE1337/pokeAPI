@@ -2,21 +2,27 @@
   text-align: center;
 }
 
-.App-logo {
-  height: 40vmin;
+.content {
+  display: flex;
+  flex-direction: row;
+  flex-wrap: wrap;
+  align-items: flex-start;
+  align-content: space-between;
+  justify-content: center;
 }
 
-.App-header {
-  background-color: #282c34;
-  min-height: 100vh;
+.card {
+  width: 10em;
+  height: 10em;
+  margin: 0.5em;
   display: flex;
   flex-direction: column;
+  justify-content: space-between;
   align-items: center;
-  justify-content: center;
-  font-size: calc(10px + 2vmin);
-  color: white;
+  background-color: antiquewhite;
+  border-radius: 1em;
+  transition: all 0.3s;
 }
-
-.App-link {
-  color: #09d3ac;
+.card:hover {
+  transform: scale(1.05);
 }
