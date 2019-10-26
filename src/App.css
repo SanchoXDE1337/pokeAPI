@@ -22,7 +22,10 @@
   background-color: antiquewhite;
   border-radius: 1em;
   transition: all 0.3s;
+  text-decoration: none;
 }
+
+
 .card:hover {
   transform: scale(1.05);
 }
