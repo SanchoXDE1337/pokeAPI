@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react'
+import React from 'react'
 import axios from 'axios'
 import {BrowserRouter, Route, NavLink} from "react-router-dom"
 import './App.css'
@@ -7,28 +7,79 @@ const SimpleCard = ({name, imgLink, className, url, id}) => {
     return (
         <NavLink to={`/pokemon/${id}`} className={className}>
             <div>
-                <p>{name[0].toUpperCase() + name.slice(1)}</p>
+                <p>{pokeName(name)}</p>
                 <img src={imgLink} alt={name}/>
             </div>
         </NavLink>
     )
 }
 
-const PokemonPage = ({url}) => {
-    const [data, setData] = useState({})
-    useEffect(() => {
-        async function fetchData() {
-            const result = await axios(url)
-            await setData(result.data)
-        }
-        fetchData()
-    }, )
+const Img = ({src}) => {
     return (
-        <div>
-            {data.name}
-            <NavLink to={`/`}>Back</NavLink>
-        </div>
+        <img src={src} alt="" style={{width: '20vw', height: '100%'}}/>
     )
+}
+
+const pokeName = (name) => name[0].toUpperCase() + name.slice(1)
+
+
+class PokePage extends React.Component {
+    constructor (props) {
+        super(props)
+        this.state = {}
+        this.fetchData(this.props.url)
+    }
+
+    fetchData = async (url) => {
+        const result = await axios(url)
+        await this.setState(result.data)
+    }
+
+    fetchAbilities = async (state) => {
+        let abilities = state.abilities
+        console.log(state)
+        let abilityLinks = await abilities.map((ability) => {
+            console.log(ability.ability.url)
+            return ability.ability.url
+        })
+        console.log(abilityLinks)
+    }
+
+    async componentDidUpdate () {
+        await this.fetchAbilities(this.state)
+    }
+
+    render () {
+        let imgLinks = {...this.state.sprites}
+        let imgLinkArr = []
+        for (let key in imgLinks) {
+            if (imgLinks[key] !== null) {
+                imgLinkArr.push(imgLinks[key])
+            }
+        }
+        imgLinkArr.reverse()
+
+        return (
+            <div>
+                <div>
+                    {this.state.name}
+                </div>
+                <div>
+                    {imgLinkArr.map((imgLink) => <Img src={imgLink} alt={this.state.name} key={imgLink}/>)}
+                </div>
+                <div>
+                    <p>Weight: {this.state.weight / 10 + 'kg'}</p>
+                    <p>Height: {this.state.height / 10 + 'm'}</p>
+                </div>
+                <NavLink to={`/`}>
+                    <div>
+                        <button>Back</button>
+                    </div>
+                </NavLink>
+            </div>
+        )
+    }
+
 }
 
 class App extends React.Component {
@@ -52,7 +103,6 @@ class App extends React.Component {
     }
 
     render () {
-        console.log(this.state)
         return (
             <BrowserRouter>
                 <div className="App">
@@ -74,7 +124,7 @@ class App extends React.Component {
                                }
                         />
                         {this.state.pokemons.map(({name, id, url}) =>
-                            <Route path={`/pokemon/${id}`} key={id} render={() => <PokemonPage url={url}/>}/>
+                            <Route path={`/pokemon/${id}`} key={id} render={() => <PokePage url={url}/>}/>
                         )}
                     </div>
                 </div>
