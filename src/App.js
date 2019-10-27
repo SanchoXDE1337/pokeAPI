@@ -22,65 +22,82 @@ const Img = ({src}) => {
 
 const pokeName = (name) => name[0].toUpperCase() + name.slice(1)
 
-
 class PokePage extends React.Component {
     constructor (props) {
         super(props)
         this.state = {}
-        this.fetchData(this.props.url)
     }
 
     fetchData = async (url) => {
         const result = await axios(url)
-        await this.setState(result.data)
+        await this.setState({data: result.data, abilityLink: []})
     }
 
-    fetchAbilities = async (state) => {
-        let abilities = state.abilities
-        console.log(state)
-        let abilityLinks = await abilities.map((ability) => {
-            console.log(ability.ability.url)
-            return ability.ability.url
-        })
-        console.log(abilityLinks)
+    fetchAbilities = async () => {
+        let abilities
+        let abilityLinks = []
+        abilities = this.state.data.abilities
+        for (let key in abilities) {
+            abilityLinks.push(abilities[key].ability.url)
+        }
+        await this.setState({abilityLink: abilityLinks})
+        console.log(Object.keys(this.state.abilityLink))
     }
 
-    async componentDidUpdate () {
-        await this.fetchAbilities(this.state)
+    async componentDidMount () {
+        await this.fetchData(this.props.url)
+        await this.fetchAbilities()
+    }
+
+    AbilityRender = async () => {
+        let result
+        for (let key in this.state.abilityLink) {
+            result = await axios(this.state.abilityLink[key])
+            console.log(result.data.name)
+            return (
+                <p>{result.name}</p>
+            )
+        }
     }
 
     render () {
-        let imgLinks = {...this.state.sprites}
-        let imgLinkArr = []
-        for (let key in imgLinks) {
-            if (imgLinks[key] !== null) {
-                imgLinkArr.push(imgLinks[key])
+        if (!this.state.abilityLink) {
+            return null
+        } else {
+            let imgLinks = {...this.state.data.sprites}
+            let imgLinkArr = []
+            for (let key in imgLinks) {
+                if (imgLinks[key] !== null) {
+                    imgLinkArr.push(imgLinks[key])
+                }
             }
-        }
-        imgLinkArr.reverse()
-
-        return (
-            <div>
+            imgLinkArr.reverse()
+            return (
                 <div>
-                    {this.state.name}
-                </div>
-                <div>
-                    {imgLinkArr.map((imgLink) => <Img src={imgLink} alt={this.state.name} key={imgLink}/>)}
-                </div>
-                <div>
-                    <p>Weight: {this.state.weight / 10 + 'kg'}</p>
-                    <p>Height: {this.state.height / 10 + 'm'}</p>
-                </div>
-                <NavLink to={`/`}>
                     <div>
-                        <button>Back</button>
+                        {this.state.data.name}
                     </div>
-                </NavLink>
-            </div>
-        )
+                    <div>
+                        {imgLinkArr.map((imgLink) => <Img src={imgLink} alt={this.state.data.name} key={imgLink}/>)}
+                    </div>
+                    <div>
+                        <p>Weight: {this.state.data.weight / 10 + 'kg'}</p>
+                        <p>Height: {this.state.data.height / 10 + 'm'}</p>
+                    </div>
+                    <div>
+                        {this.AbilityRender()}
+                    </div>
+                    <NavLink to={`/`}>
+                        <div>
+                            <button>Back</button>
+                        </div>
+                    </NavLink>
+                </div>
+            )
+        }
     }
-
 }
+
 
 class App extends React.Component {
     state = {
@@ -123,7 +140,7 @@ class App extends React.Component {
                                }
                                }
                         />
-                        {this.state.pokemons.map(({name, id, url}) =>
+                        {this.state.pokemons.map(({id, url}) =>
                             <Route path={`/pokemon/${id}`} key={id} render={() => <PokePage url={url}/>}/>
                         )}
                     </div>
