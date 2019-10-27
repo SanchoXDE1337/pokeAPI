@@ -16,13 +16,13 @@ const SimpleCard = ({name, imgLink, className, url, id}) => {
 
 const Img = ({src}) => {
     return (
-        <img src={src} alt="" style={{width: '12vw', height: '100%'}}/>
+        <img src={src} alt="" style={{width: '', height: '15vh'}}/>
     )
 }
 
 const Ability = ({name, effect}) => {
     return(
-        <div>{firstLetterCapitalize(name)}: {effect}</div>
+        <div className={"ability"}>{firstLetterCapitalize(name)}: {effect}</div>
     )
 }
 
@@ -73,7 +73,7 @@ class PokePage extends React.Component {
             imgLinkArr.reverse()
             console.log(this.state.abilities[0])
             return (
-                <div>
+                <div className="pokeCard">
                     <div>
                         {firstLetterCapitalize(this.state.data.name)}
                     </div>
@@ -85,7 +85,7 @@ class PokePage extends React.Component {
                         <p>Height: {this.state.data.height / 10 + 'm'}</p>
                     </div>
                     <div>
-                        {this.state.abilities.map(({name, effect}) => <Ability name={name} effect={effect}/>)}
+                        {this.state.abilities.map(({name, effect}) => <Ability name={name} effect={effect} key={name+effect}/>)}
                     </div>
                     <NavLink to={`/`}>
                         <div>
@@ -105,7 +105,7 @@ class App extends React.Component {
     }
 
     addCards = async () => {
-        const data = await (await fetch('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=20"')).json()
+        const data = await (await fetch('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=120"')).json()
         const results = data.results
         results.map(async ({name, url}) => {
             const result = await (await fetch(url)).json()
@@ -123,7 +123,7 @@ class App extends React.Component {
         return (
             <BrowserRouter>
                 <div className="App">
-                    <header>Pokemon</header>
+                    <header></header>
                     <div className='content'>
                         <Route exact path={`/`}
                                component={() => {
