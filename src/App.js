@@ -7,7 +7,7 @@ const SimpleCard = ({name, imgLink, className, url, id}) => {
     return (
         <NavLink to={`/pokemon/${id}`} className={className}>
             <div>
-                <p>{pokeName(name)}</p>
+                <p>{firstLetterCapitalize(name)}</p>
                 <img src={imgLink} alt={name}/>
             </div>
         </NavLink>
@@ -16,11 +16,17 @@ const SimpleCard = ({name, imgLink, className, url, id}) => {
 
 const Img = ({src}) => {
     return (
-        <img src={src} alt="" style={{width: '20vw', height: '100%'}}/>
+        <img src={src} alt="" style={{width: '12vw', height: '100%'}}/>
     )
 }
 
-const pokeName = (name) => name[0].toUpperCase() + name.slice(1)
+const Ability = ({name, effect}) => {
+    return(
+        <div>{firstLetterCapitalize(name)}: {effect}</div>
+    )
+}
+
+const firstLetterCapitalize = (name) => name[0].toUpperCase() + name.slice(1)
 
 class PokePage extends React.Component {
     constructor (props) {
@@ -30,7 +36,7 @@ class PokePage extends React.Component {
 
     fetchData = async (url) => {
         const result = await axios(url)
-        await this.setState({data: result.data, abilityLink: []})
+        await this.setState({data: result.data, abilityLink: [], abilities: []})
     }
 
     fetchAbilities = async () => {
@@ -40,8 +46,12 @@ class PokePage extends React.Component {
         for (let key in abilities) {
             abilityLinks.push(abilities[key].ability.url)
         }
-        await this.setState({abilityLink: abilityLinks})
-        console.log(Object.keys(this.state.abilityLink))
+        await abilityLinks.map(async (link) => {
+            const result = (await axios(link)).data
+            await this.setState({
+                abilities: [...this.state.abilities, {name: result.name, effect: result.effect_entries[0].effect}]
+            })
+        })
     }
 
     async componentDidMount () {
@@ -49,19 +59,8 @@ class PokePage extends React.Component {
         await this.fetchAbilities()
     }
 
-    AbilityRender = async () => {
-        let result
-        for (let key in this.state.abilityLink) {
-            result = await axios(this.state.abilityLink[key])
-            console.log(result.data.name)
-            return (
-                <p>{result.name}</p>
-            )
-        }
-    }
-
     render () {
-        if (!this.state.abilityLink) {
+        if (!this.state.abilities) {
             return null
         } else {
             let imgLinks = {...this.state.data.sprites}
@@ -72,10 +71,11 @@ class PokePage extends React.Component {
                 }
             }
             imgLinkArr.reverse()
+            console.log(this.state.abilities[0])
             return (
                 <div>
                     <div>
-                        {this.state.data.name}
+                        {firstLetterCapitalize(this.state.data.name)}
                     </div>
                     <div>
                         {imgLinkArr.map((imgLink) => <Img src={imgLink} alt={this.state.data.name} key={imgLink}/>)}
@@ -85,7 +85,7 @@ class PokePage extends React.Component {
                         <p>Height: {this.state.data.height / 10 + 'm'}</p>
                     </div>
                     <div>
-                        {this.AbilityRender()}
+                        {this.state.abilities.map(({name, effect}) => <Ability name={name} effect={effect}/>)}
                     </div>
                     <NavLink to={`/`}>
                         <div>
