@@ -11,7 +11,7 @@ class App extends React.Component {
     }
 
     addCards = async () => {
-        const data = (await axios('https://pokeapi.co/api/v2/pokemon/')).data
+        const data = (await axios('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=128"')).data
         const results = data.results
         results.map(async ({name, url}) => {
             const result = (await axios(url)).data
