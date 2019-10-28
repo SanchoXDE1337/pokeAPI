@@ -3,9 +3,9 @@ import axios from 'axios'
 import {BrowserRouter, Route, NavLink} from "react-router-dom"
 import './App.css'
 
-const SimpleCard = ({name, imgLink, className, url, id}) => {
+const SimpleCard = ({name, imgLink, className, id}) => {
     return (
-        <NavLink to={`/pokemon/${id}`} className={className}>
+        <NavLink to={`/pokeAPI/pokemon/${id}`} className={className}>
             <div>
                 <p>{firstLetterCapitalize(name)}</p>
                 <img src={imgLink} alt={name}/>
@@ -22,7 +22,10 @@ const Img = ({src}) => {
 
 const Ability = ({name, effect}) => {
     return (
-        <div className={"ability"}>{firstLetterCapitalize(name)}: {effect}</div>
+        <div className={"ability"}>
+            <div className={"abilityName"}>{firstLetterCapitalize(name)}</div>
+            <div>{effect}</div>
+        </div>
     )
 }
 
@@ -38,6 +41,7 @@ class PokePage extends React.Component {
         const result = await (await fetch(url)).json()
         await this.setState({data: result, abilityLink: [], abilities: []})
     }
+
     fetchAbilities = async () => {
         let abilities
         let abilityLinks = []
@@ -72,7 +76,7 @@ class PokePage extends React.Component {
             imgLinkArr.reverse()
             return (
                 <div className="pokeCard">
-                    <div>
+                    <div className={"pokeName"}>
                         {firstLetterCapitalize(this.state.data.name)}
                     </div>
                     <div>
@@ -104,7 +108,7 @@ class App extends React.Component {
     }
 
     addCards = async () => {
-        const data = (await axios('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=24"')).data
+        const data = (await axios('https://pokeapi.co/api/v2/pokemon/')).data
         const results = data.results
         results.map(async ({name, url}) => {
             const result = (await axios(url)).data
@@ -124,7 +128,7 @@ class App extends React.Component {
                 <div className="App">
                     <header>
                         <NavLink to={`/pokeAPI/`}>
-                           <div className="header"></div>
+                            <div className="header"></div>
                         </NavLink>
                     </header>
                     <div className='content'>
@@ -144,7 +148,7 @@ class App extends React.Component {
                                }
                         />
                         {this.state.pokemons.map(({id, url}) =>
-                            <Route path={`/pokemon/${id}`} key={id} render={() => <PokePage url={url}/>}/>
+                            <Route path={`/pokeAPI/pokemon/${id}`} key={id} render={() => <PokePage url={url}/>}/>
                         )}
                     </div>
                 </div>
