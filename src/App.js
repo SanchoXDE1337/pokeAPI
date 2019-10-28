@@ -86,7 +86,7 @@ class PokePage extends React.Component {
                         {this.state.abilities.map(({name, effect}) => <Ability name={name} effect={effect}
                                                                                key={name + effect}/>)}
                     </div>
-                    <NavLink to={`/`}>
+                    <NavLink to={`/pokeAPI/`}>
                         <div>
                             <button>Back</button>
                         </div>
@@ -123,12 +123,12 @@ class App extends React.Component {
             <BrowserRouter>
                 <div className="App">
                     <header>
-                        <NavLink to={`/`}>
+                        <NavLink to={`/pokeAPI/`}>
                            <div className="header"></div>
                         </NavLink>
                     </header>
                     <div className='content'>
-                        <Route exact path={`/`}
+                        <Route exact path={`/pokeAPI/`}
                                component={() => {
                                    return this.state.pokemons.map(({name, imgLink, url, id}) =>
                                        <SimpleCard
