@@ -1,5 +1,6 @@
 body {
   background: url(https://data.whicdn.com/images/250452294/original.jpg) repeat;
+  padding-top: 0.5em;
 }
 
 .App {
@@ -7,10 +8,26 @@ body {
 }
 
 header {
-  width: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+}
+
+.header {
+  width: 35vw;
   height: 15vh;
   background: url(https://i.pinimg.com/originals/fd/18/c6/fd18c6d26d4d9d26a0bd9d1a2fb2bd04.png) no-repeat center;
-  background-size: 60% 25vh;
+  background-size: 100% 30vh;
+  transition: all 0.3s;
+}
+
+.header:hover {
+  transform: scale(1.05);
+}
+
+.header:active {
+  transform: scale(0.99);
 }
 
 .content {
@@ -30,18 +47,23 @@ header {
   flex-direction: column;
   justify-content: space-between;
   align-items: center;
+  color: teal;
   background-color: antiquewhite;
   border-radius: 1em;
   transition: all 0.3s;
   text-decoration: none;
 }
 
+.card:visited {
+  color: teal;
+}
 
 .card:hover {
   transform: scale(1.05);
 }
 
 .pokeCard {
+  margin-top: 0.5em;
   display: flex;
   width: 70vw;
   flex-direction: column;

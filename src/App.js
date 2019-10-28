@@ -21,7 +21,7 @@ const Img = ({src}) => {
 }
 
 const Ability = ({name, effect}) => {
-    return(
+    return (
         <div className={"ability"}>{firstLetterCapitalize(name)}: {effect}</div>
     )
 }
@@ -35,10 +35,9 @@ class PokePage extends React.Component {
     }
 
     fetchData = async (url) => {
-        const result = await axios(url)
-        await this.setState({data: result.data, abilityLink: [], abilities: []})
+        const result = await (await fetch(url)).json()
+        await this.setState({data: result, abilityLink: [], abilities: []})
     }
-
     fetchAbilities = async () => {
         let abilities
         let abilityLinks = []
@@ -71,7 +70,6 @@ class PokePage extends React.Component {
                 }
             }
             imgLinkArr.reverse()
-            console.log(this.state.abilities[0])
             return (
                 <div className="pokeCard">
                     <div>
@@ -85,7 +83,8 @@ class PokePage extends React.Component {
                         <p>Height: {this.state.data.height / 10 + 'm'}</p>
                     </div>
                     <div>
-                        {this.state.abilities.map(({name, effect}) => <Ability name={name} effect={effect} key={name+effect}/>)}
+                        {this.state.abilities.map(({name, effect}) => <Ability name={name} effect={effect}
+                                                                               key={name + effect}/>)}
                     </div>
                     <NavLink to={`/`}>
                         <div>
@@ -105,10 +104,10 @@ class App extends React.Component {
     }
 
     addCards = async () => {
-        const data = await (await fetch('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=120"')).json()
+        const data = (await axios('https://pokeapi.co/api/v2/pokemon/?offset=0&limit=24"')).data
         const results = data.results
         results.map(async ({name, url}) => {
-            const result = await (await fetch(url)).json()
+            const result = (await axios(url)).data
             const imgLink = result.sprites.front_default
             const id = result.id
             await this.setState({pokemons: [...this.state.pokemons, {name, url, imgLink, id}]})
@@ -123,7 +122,11 @@ class App extends React.Component {
         return (
             <BrowserRouter>
                 <div className="App">
-                    <header></header>
+                    <header>
+                        <NavLink to={`/`}>
+                           <div className="header"></div>
+                        </NavLink>
+                    </header>
                     <div className='content'>
                         <Route exact path={`/`}
                                component={() => {
